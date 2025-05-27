@@ -16,37 +16,54 @@
         <!-- SB Admin 2 Styles -->
         <link href="https://cdnjs.cloudflare.com/ajax/libs/startbootstrap-sb-admin-2/4.1.4/css/sb-admin-2.min.css" rel="stylesheet">
 
-        <!-- Custom styles (opcional) -->
         <style>
-            /* Puedes agregar estilos personalizados aquí si es necesario */
+            .table th, .table td {
+                vertical-align: middle;
+            }
         </style>
     </head>
 
     <body id="page-top">
-
-        <!-- Page Wrapper -->
         <div id="wrapper">
-
-
-            <!-- Content Wrapper -->
             <div id="content-wrapper" class="d-flex flex-column">
-
-                <!-- Main Content -->
                 <div id="content">
-
-                    <!-- Topbar (Opcional, puedes removerlo) -->
+                    <!-- Topbar -->
                     <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
-                        <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
+                        <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3" style="display: none;"> 
                             <i class="fa fa-bars"></i>
                         </button>
                         <h1 class="h3 mb-0 text-gray-800">Administración de Estudiantes</h1>
+
+                        <!-- Topbar Navbar -->
+                        <ul class="navbar-nav ml-auto">
+                            <li class="nav-item">
+                                <a class="nav-link text-gray-600" href="#" id="btnIrCambiarContrasena">
+                                    <i class="fas fa-key fa-fw"></i>
+                                    Cambiar Contraseña
+                                </a>
+                            </li>
+                            <div class="topbar-divider d-none d-sm-block"></div>
+                            <li class="nav-item dropdown no-arrow">
+                                <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
+                                   data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <span class="mr-2 d-none d-lg-inline text-gray-600 small" id="currentUserDisplay">Usuario</span>
+                                    <img class="img-profile rounded-circle"
+                                         src="img/undraw_profile.svg">
+                                </a>
+                                <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
+                                     aria-labelledby="userDropdown">
+                                    <a class="dropdown-item" href="#" id="btnLogout" data-toggle="modal" data-target="#logoutModal">
+                                        <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
+                                        Cerrar Sesión
+                                    </a>
+                                </div>
+                            </li>
+                        </ul>
                     </nav>
                     <!-- End of Topbar -->
 
                     <!-- Begin Page Content -->
                     <div class="container-fluid">
-
-                        <!-- Formulario y Tabla -->
                         <div class="row">
                             <!-- Formulario Card -->
                             <div class="col-lg-5 mb-4">
@@ -57,7 +74,6 @@
                                     <div class="card-body">
                                         <form id="estudianteForm">
                                             <input type="hidden" id="codiEstdWeb" name="codiEstdWeb">
-
                                             <div class="mb-3">
                                                 <label for="dniEstdWeb" class="form-label">DNI:</label>
                                                 <input type="text" class="form-control" id="dniEstdWeb" name="dniEstdWeb" maxlength="50">
@@ -79,20 +95,16 @@
                                                 <input type="date" class="form-control" id="fechNaciEstdWeb" name="fechNaciEstdWeb">
                                             </div>
                                             <div class="mb-3">
-                                                <label for="logiEstd" class="form-label">Login/Usuario:</label>
-                                                <input type="text" class="form-control" id="logiEstd" name="logiEstd" maxlength="100">
+                                                <label for="logiEstd" class="form-label">Login/Usuario: <span class="text-danger">*</span></label>
+                                                <input type="text" class="form-control" id="logiEstd" name="logiEstd" maxlength="100" required>
                                             </div>
                                             <div class="mb-3">
-                                                <label for="passEstd" class="form-label">Password:</label>
-                                                <input type="password" class="form-control" id="passEstd" name="passEstd" maxlength="500">
+                                                <label for="passEstd" class="form-label">Password: <span id="passRequiredSpan" class="text-danger">*</span></label>
+                                                <input type="password" class="form-control" id="passEstd" name="passEstd" maxlength="500" aria-describedby="passHelp" required>
+                                                <small id="passHelp" class="form-text text-muted">Dejar en blanco al editar si no se desea cambiar.</small>
                                             </div>
-
-                                            <button type="submit" class="btn btn-primary" id="btnGuardar">
-                                                <i class="fas fa-save"></i> Guardar
-                                            </button>
-                                            <button type="button" class="btn btn-secondary" id="btnCancelar" style="display:none;">
-                                                <i class="fas fa-times"></i> Cancelar
-                                            </button>
+                                            <button type="submit" class="btn btn-primary" id="btnGuardar"><i class="fas fa-save mr-1"></i> Guardar</button>
+                                            <button type="button" class="btn btn-secondary" id="btnCancelar" style="display:none;"><i class="fas fa-times mr-1"></i> Cancelar</button>
                                         </form>
                                     </div>
                                 </div>
@@ -101,13 +113,11 @@
                             <!-- Tabla Card -->
                             <div class="col-lg-7 mb-4">
                                 <div class="card shadow mb-4">
-                                    <div class="card-header py-3">
-                                        <h6 class="m-0 font-weight-bold text-primary">Listado de Estudiantes</h6>
-                                    </div>
+                                    <div class="card-header py-3"><h6 class="m-0 font-weight-bold text-primary">Listado de Estudiantes</h6></div>
                                     <div class="card-body">
                                         <div class="table-responsive">
                                             <table class="table table-bordered table-hover" id="tablaEstudiantes" width="100%" cellspacing="0">
-                                                <thead class="table-dark">
+                                                <thead class="thead-dark">
                                                     <tr>
                                                         <th>ID</th>
                                                         <th>DNI</th>
@@ -120,7 +130,7 @@
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    <!-- Los datos se cargarán aquí mediante JavaScript -->
+                                                    <!-- Filas generadas por JS -->
                                                 </tbody>
                                             </table>
                                         </div>
@@ -128,55 +138,69 @@
                                 </div>
                             </div>
                         </div>
-
                     </div>
                     <!-- /.container-fluid -->
-
                 </div>
                 <!-- End of Main Content -->
-
                 <!-- Footer -->
                 <footer class="sticky-footer bg-white">
-                    <div class="container my-auto">
-                        <div class="copyright text-center my-auto">
-                            <span>Copyright © Tu Sitio Web 2024</span>
-                        </div>
-                    </div>
+                    <div class="container my-auto"><div class="copyright text-center my-auto"><span>Copyright © Tu Sitio Web 2024</span></div></div>
                 </footer>
-                <!-- End of Footer -->
-
             </div>
-            <!-- End of Content Wrapper -->
-
         </div>
-        <!-- End of Page Wrapper -->
+        <a class="scroll-to-top rounded" href="#page-top"><i class="fas fa-angle-up"></i></a>
 
-        <!-- Scroll to Top Button-->
-        <a class="scroll-to-top rounded" href="#page-top">
-            <i class="fas fa-angle-up"></i>
-        </a>
+        <!-- Logout Modal -->
+        <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+             aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">¿Listo para salir?</h5>
+                        <button class="close" type="button" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                    </div>
+                    <div class="modal-body">Selecciona "Cerrar Sesión" si estás listo para terminar tu sesión actual.</div>
+                    <div class="modal-footer">
+                        <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancelar</button>
+                        <a class="btn btn-primary" href="#" id="confirmLogoutButton">Cerrar Sesión</a>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-        <!-- Bootstrap core JavaScript-->
+        <!-- Scripts JS -->
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.3/js/bootstrap.bundle.min.js"></script>
-
-        <!-- Core plugin JavaScript-->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.min.js"></script>
-
-        <!-- Custom scripts for all pages (SB Admin 2)-->
         <script src="https://cdnjs.cloudflare.com/ajax/libs/startbootstrap-sb-admin-2/4.1.4/js/sb-admin-2.min.js"></script>
-
+        
         <!-- Tu script personalizado -->
         <script>
             document.addEventListener('DOMContentLoaded', () => {
-                const API_URL = 'EstudianteServlet'; // Ajusta si tu servlet tiene otro path o context path
+                const API_URL = 'EstudianteServlet';
+                
+                const currentUserLogin = sessionStorage.getItem('currentUserLogin');
+                const currentUserDisplay = document.getElementById('currentUserDisplay'); 
+
+                if (!currentUserLogin) {
+                    alert('Acceso denegado. Debe iniciar sesión.');
+                    window.location.href = 'login.html'; 
+                    return; 
+                }
+
+                if (currentUserDisplay) {
+                    currentUserDisplay.textContent = currentUserLogin; 
+                }
+                
                 const form = document.getElementById('estudianteForm');
                 const tablaBody = document.getElementById('tablaEstudiantes').querySelector('tbody');
+                
                 const formTitle = document.getElementById('form-title');
                 const btnGuardar = document.getElementById('btnGuardar');
                 const btnCancelar = document.getElementById('btnCancelar');
+                const passRequiredSpan = document.getElementById('passRequiredSpan');
+                const passHelp = document.getElementById('passHelp');
 
-                // Inputs del formulario
                 const codiEstdWebInput = document.getElementById('codiEstdWeb');
                 const dniEstdWebInput = document.getElementById('dniEstdWeb');
                 const appaEstdWebInput = document.getElementById('appaEstdWeb');
@@ -186,108 +210,110 @@
                 const logiEstdInput = document.getElementById('logiEstd');
                 const passEstdInput = document.getElementById('passEstd');
 
-                // ---- FUNCIONES DE RENDERIZADO Y FORMULARIO ----
-                function resetForm() {
-                    form.reset();
-                    codiEstdWebInput.value = ''; // Asegurarse que el ID oculto esté vacío
-                    formTitle.textContent = 'Agregar Nuevo Estudiante';
-                    btnGuardar.innerHTML = '<i class="fas fa-save"></i> Guardar';
-                    btnGuardar.classList.remove('btn-warning');
-                    btnGuardar.classList.add('btn-primary');
-                    btnCancelar.style.display = 'none';
-                    passEstdInput.disabled = false; // Habilitar campo password para nuevos registros
+                let modoEdicion = false;
+
+                const btnIrCambiarContrasena = document.getElementById('btnIrCambiarContrasena');
+                const btnLogout = document.getElementById('btnLogout'); 
+                const confirmLogoutButton = document.getElementById('confirmLogoutButton'); 
+
+
+                function configurarFormulario(esEdicion) {
+                    modoEdicion = esEdicion;
+                    if (esEdicion) {
+                        formTitle.textContent = 'Editar Estudiante';
+                        btnGuardar.innerHTML = '<i class="fas fa-edit mr-1"></i> Actualizar';
+                        btnGuardar.classList.remove('btn-primary');
+                        btnGuardar.classList.add('btn-warning');
+                        btnCancelar.style.display = 'inline-block';
+                        passRequiredSpan.style.display = 'none';
+                        passEstdInput.required = false;
+                        passHelp.textContent = 'Dejar en blanco si no desea cambiar la contraseña.';
+                        logiEstdInput.disabled = true;
+                    } else {
+                        formTitle.textContent = 'Agregar Estudiante';
+                        btnGuardar.innerHTML = '<i class="fas fa-save mr-1"></i> Guardar';
+                        btnGuardar.classList.remove('btn-warning');
+                        btnGuardar.classList.add('btn-primary');
+                        btnCancelar.style.display = 'none';
+                        passRequiredSpan.style.display = 'inline-block';
+                        passEstdInput.required = true;
+                        passHelp.textContent = 'Requerido para nuevos estudiantes.';
+                        logiEstdInput.disabled = false;
+                        form.reset();
+                        codiEstdWebInput.value = '';
+                    }
                 }
 
-                function showAlert(message, type = 'success') {
-                    // Podrías implementar una alerta más sofisticada con Bootstrap Toasts o SweetAlert
-                    console.log(`Alert (${type}): ${message}`);
-                    alert(message); // Simple alert por ahora
+                function mostrarAlerta(mensaje, tipo = 'success') {
+                    alert(`${tipo.toUpperCase()}: ${mensaje}`);
                 }
 
-                function popularFormulario(estudiante) {
+                function popularFormularioParaEditar(estudiante) {
                     codiEstdWebInput.value = estudiante.codiEstdWeb;
                     dniEstdWebInput.value = estudiante.dniEstdWeb || '';
                     appaEstdWebInput.value = estudiante.appaEstdWeb || '';
                     apmaEstdWebInput.value = estudiante.apmaEstdWeb || '';
                     nombEstdWebInput.value = estudiante.nombEstdWeb || '';
-                    // El formato de fecha 'yyyy-MM-dd' es el esperado por input type="date"
                     fechNaciEstdWebInput.value = estudiante.fechNaciEstdWeb || '';
                     logiEstdInput.value = estudiante.logiEstd || '';
-                    passEstdInput.value = ''; // No popular password por seguridad
-                    passEstdInput.disabled = true; // Deshabilitar campo password en edición
-                    // (para cambiarlo, se requeriría una lógica separada)
-
-                    formTitle.textContent = 'Editar Estudiante (ID: ' + estudiante.codiEstdWeb + ')';
-                    btnGuardar.innerHTML = '<i class="fas fa-edit"></i> Actualizar';
-                    btnGuardar.classList.remove('btn-primary');
-                    btnGuardar.classList.add('btn-warning');
-                    btnCancelar.style.display = 'inline-block';
+                    passEstdInput.value = '';
+                    configurarFormulario(true);
+                    form.scrollIntoView({ behavior: 'smooth' });
                 }
 
                 function renderizarTabla(estudiantes) {
-                    tablaBody.innerHTML = ''; // Limpiar tabla
-                    if (!Array.isArray(estudiantes)) {
-                        console.error("Error: la respuesta del servidor no es un array de estudiantes.", estudiantes);
-                        showAlert("Error al cargar datos: formato incorrecto.", "danger");
-                        return;
-                    }
-                    if (estudiantes.length === 0) {
+                    tablaBody.innerHTML = ''; 
+                    if (!Array.isArray(estudiantes) || estudiantes.length === 0) {
                         tablaBody.innerHTML = '<tr><td colspan="8" class="text-center">No hay estudiantes registrados.</td></tr>';
                         return;
                     }
 
                     estudiantes.forEach(e => {
                         const tr = document.createElement('tr');
+                        const esUsuarioActual = e.logiEstd === currentUserLogin; 
                         tr.innerHTML = `
-                    <td>${e.codiEstdWeb !== undefined ? e.codiEstdWeb : 'N/A'}</td>
-                    <td>${e.dniEstdWeb || ''}</td>
-                    <td>${e.appaEstdWeb || ''}</td>
-                    <td>${e.apmaEstdWeb || ''}</td>
-                    <td>${e.nombEstdWeb || ''}</td>
-                    <td>${e.fechNaciEstdWeb || ''}</td>
-                    <td>${e.logiEstd || ''}</td>
-                    <td>
-                        <button class="btn btn-sm btn-info btn-editar" data-id="${e.codiEstdWeb}">
-                            <i class="fas fa-edit"></i> Editar
-                        </button>
-                        <button class="btn btn-sm btn-danger btn-eliminar" data-id="${e.codiEstdWeb}">
-                            <i class="fas fa-trash"></i> Eliminar
-                        </button>
-                    </td>
-                `;
+                            <td>${e.codiEstdWeb || 'N/A'}</td>
+                            <td>${e.dniEstdWeb || ''}</td>
+                            <td>${e.appaEstdWeb || ''}</td>
+                            <td>${e.apmaEstdWeb || ''}</td>
+                            <td>${e.nombEstdWeb || ''}</td>
+                            <td>${e.fechNaciEstdWeb || ''}</td>
+                            <td>${e.logiEstd || ''}</td>
+                            <td>
+                                <button class="btn btn-sm btn-info btn-editar" data-id="${e.codiEstdWeb}">
+                                    <i class="fas fa-edit"></i> Editar
+                                </button>
+                                <button class="btn btn-sm btn-danger btn-eliminar" data-id="${e.codiEstdWeb}" data-login="${e.logiEstd || ''}" ${esUsuarioActual ? 'disabled title="No puedes eliminar tu propia cuenta"' : ''}>
+                                    <i class="fas fa-trash"></i> Eliminar
+                                </button>
+                            </td>
+                        `;
                         tablaBody.appendChild(tr);
                     });
                 }
 
-                // ---- FUNCIONES FETCH ----
                 async function fetchGetEstudiantes() {
                     try {
                         const response = await fetch(API_URL);
-                        if (!response.ok) {
-                            const errorData = await response.json().catch(() => ({message: `Error HTTP ${response.status}`}));
-                            throw new Error(errorData.error || errorData.message || `Error ${response.status}`);
-                        }
+                        if (!response.ok) throw new Error(`Error HTTP ${response.status} al obtener estudiantes`);
                         const estudiantes = await response.json();
                         renderizarTabla(estudiantes);
                     } catch (error) {
-                        console.error('Error en GET (todos):', error);
-                        showAlert(`Error al obtener estudiantes: ${error.message}`, 'danger');
-                        renderizarTabla([]); // Mostrar tabla vacía o con mensaje de error
+                        console.error('Error en fetchGetEstudiantes:', error);
+                        mostrarAlerta(error.message, 'danger');
+                        renderizarTabla([]);
                     }
                 }
 
                 async function fetchGetEstudianteById(id) {
                     try {
                         const response = await fetch(`${API_URL}?id=${id}`);
-                        if (!response.ok) {
-                            const errorData = await response.json().catch(() => ({message: `Error HTTP ${response.status}`}));
-                            throw new Error(errorData.error || errorData.message || `Error ${response.status}`);
-                        }
+                        if (!response.ok) throw new Error(`Error HTTP ${response.status} al obtener estudiante ${id}`);
                         const estudiante = await response.json();
-                        popularFormulario(estudiante);
+                        popularFormularioParaEditar(estudiante);
                     } catch (error) {
-                        console.error(`Error en GET (id=${id}):`, error);
-                        showAlert(`Error al obtener estudiante para editar: ${error.message}`, 'danger');
+                        console.error('Error en fetchGetEstudianteById:', error);
+                        mostrarAlerta(error.message, 'danger');
                     }
                 }
 
@@ -298,118 +324,134 @@
                             headers: {'Content-Type': 'application/json; charset=UTF-8'},
                             body: JSON.stringify(data)
                         });
-                        if (!response.ok) { // Status no es 2xx
-                            const errorData = await response.json().catch(() => ({message: `Error HTTP ${response.status}`}));
-                            throw new Error(errorData.error || errorData.message || `Error ${response.status}`);
-                        }
                         const result = await response.json();
-                        showAlert(result.message || 'Estudiante creado con éxito.', 'success');
-                        resetForm();
+                        if (!response.ok) throw new Error(result.error || `Error HTTP ${response.status} al crear`);
+                        
+                        mostrarAlerta(result.message || 'Estudiante creado con éxito.', 'success');
+                        configurarFormulario(false);
                         fetchGetEstudiantes();
                     } catch (error) {
-                        console.error('Error en POST:', error);
-                        showAlert(`Error al crear estudiante: ${error.message}`, 'danger');
+                        console.error('Error en fetchPostEstudiante:', error);
+                        mostrarAlerta(error.message, 'danger');
                     }
                 }
 
                 async function fetchPutEstudiante(id, data) {
-                    // Asegurarse que el ID esté en el cuerpo del JSON para el PUT
                     data.codiEstdWeb = parseInt(id);
+                    if (!passEstdInput.value || passEstdInput.value.trim() === '') {
+                        delete data.passEstd; 
+                    }
+                     delete data.logiEstd; 
+
                     try {
-                        const response = await fetch(API_URL, {// PUT no lleva ID en la URL, va en el body
+                        const response = await fetch(API_URL, {
                             method: 'PUT',
                             headers: {'Content-Type': 'application/json; charset=UTF-8'},
                             body: JSON.stringify(data)
                         });
-                        if (!response.ok) {
-                            const errorData = await response.json().catch(() => ({message: `Error HTTP ${response.status}`}));
-                            throw new Error(errorData.error || errorData.message || `Error ${response.status}`);
-                        }
                         const result = await response.json();
-                        showAlert(result.message || 'Estudiante actualizado con éxito.', 'success');
-                        resetForm();
+                        if (!response.ok) throw new Error(result.error || `Error HTTP ${response.status} al actualizar`);
+
+                        mostrarAlerta(result.message || 'Estudiante actualizado con éxito.', 'success');
+                        configurarFormulario(false); 
                         fetchGetEstudiantes();
                     } catch (error) {
-                        console.error('Error en PUT:', error);
-                        showAlert(`Error al actualizar estudiante: ${error.message}`, 'danger');
+                        console.error('Error en fetchPutEstudiante:', error);
+                        mostrarAlerta(error.message, 'danger');
                     }
                 }
 
-                async function fetchDeleteEstudiante(id) {
-                    if (!confirm(`¿Está seguro de eliminar al estudiante con ID ${id}?`))
+                async function fetchDeleteEstudiante(id, loginEstudiante) {
+                    if (loginEstudiante === currentUserLogin) {
+                        mostrarAlerta('No puedes eliminar tu propia cuenta.', 'warning');
                         return;
+                    }
+                    if (!confirm(`¿Está seguro de eliminar al estudiante con ID ${id} (Login: ${loginEstudiante})?`)) return;
+                    
                     try {
-                        const response = await fetch(`${API_URL}?id=${id}`, {
-                            method: 'DELETE'
-                        });
-                        if (!response.ok) {
-                            const errorData = await response.json().catch(() => ({message: `Error HTTP ${response.status}`}));
-                            throw new Error(errorData.error || errorData.message || `Error ${response.status}`);
-                        }
+                        const response = await fetch(`${API_URL}?id=${id}`, { method: 'DELETE' });
                         const result = await response.json();
-                        showAlert(result.message || 'Estudiante eliminado con éxito.', 'success');
+                        if (!response.ok) throw new Error(result.error || `Error HTTP ${response.status} al eliminar`);
+
+                        mostrarAlerta(result.message || 'Estudiante eliminado con éxito.', 'success');
                         fetchGetEstudiantes();
                     } catch (error) {
-                        console.error('Error en DELETE:', error);
-                        showAlert(`Error al eliminar estudiante: ${error.message}`, 'danger');
+                        console.error('Error en fetchDeleteEstudiante:', error);
+                        mostrarAlerta(error.message, 'danger');
                     }
                 }
 
-                // ---- MANEJADORES DE EVENTOS ----
                 form.addEventListener('submit', (event) => {
                     event.preventDefault();
-
                     const estudianteData = {
                         dniEstdWeb: dniEstdWebInput.value.trim(),
                         appaEstdWeb: appaEstdWebInput.value.trim(),
                         apmaEstdWeb: apmaEstdWebInput.value.trim(),
                         nombEstdWeb: nombEstdWebInput.value.trim(),
-                        fechNaciEstdWeb: fechNaciEstdWebInput.value, // El formato YYYY-MM-DD es correcto
+                        fechNaciEstdWeb: fechNaciEstdWebInput.value,
                         logiEstd: logiEstdInput.value.trim(),
-                        passEstd: passEstdInput.value // No trim password, podría ser intencional
+                        passEstd: passEstdInput.value 
                     };
-
                     const id = codiEstdWebInput.value;
-
-                    if (id) { // Si hay ID, es actualización (PUT)
-                        // Solo enviar password si se ha escrito algo (para permitir cambiarlo)
-                        // O si la lógica de negocio requiere reenviarlo. Por ahora, si está deshabilitado no se envía.
-                        if (passEstdInput.disabled || passEstdInput.value === '') {
-                            delete estudianteData.passEstd;
-                        }
+                    if (modoEdicion && id) {
                         fetchPutEstudiante(id, estudianteData);
-                    } else { // Si no hay ID, es creación (POST)
-                        if (estudianteData.passEstd === '') { // No permitir password vacío en creación
-                            showAlert('La contraseña es requerida para nuevos estudiantes.', 'warning');
-                            return;
-                        }
+                    } else {
                         fetchPostEstudiante(estudianteData);
                     }
                 });
 
                 tablaBody.addEventListener('click', (event) => {
-                    if (event.target.classList.contains('btn-editar') || event.target.closest('.btn-editar')) {
-                        const button = event.target.closest('.btn-editar');
-                        const id = button.dataset.id;
+                    const targetButton = event.target.closest('button');
+                    if (!targetButton) return;
+
+                    if (targetButton.classList.contains('btn-editar')) {
+                        const id = targetButton.dataset.id;
                         fetchGetEstudianteById(id);
-                        // Scroll al formulario para mejor UX en móviles
-                        form.scrollIntoView({behavior: 'smooth'});
-                    }
-                    if (event.target.classList.contains('btn-eliminar') || event.target.closest('.btn-eliminar')) {
-                        const button = event.target.closest('.btn-eliminar');
-                        const id = button.dataset.id;
-                        fetchDeleteEstudiante(id);
+                    } else if (targetButton.classList.contains('btn-eliminar')) {
+                         if (targetButton.disabled) return;
+                        const id = targetButton.dataset.id;
+                        const loginEstudiante = targetButton.dataset.login;
+                        fetchDeleteEstudiante(id, loginEstudiante);
                     }
                 });
 
-                btnCancelar.addEventListener('click', () => {
-                    resetForm();
-                });
+                if(btnCancelar) {
+                    btnCancelar.addEventListener('click', () => {
+                        configurarFormulario(false);
+                    });
+                }
 
-                // Carga inicial de datos
+                if (btnIrCambiarContrasena) {
+                    btnIrCambiarContrasena.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        if (currentUserLogin) {
+                            // CORRECCIÓN APLICADA AQUÍ
+                            window.location.href = `contraseña.html?user=${encodeURIComponent(currentUserLogin)}`;
+                        } else {
+                            mostrarAlerta('No se pudo identificar al usuario para cambiar la contraseña.', 'danger');
+                        }
+                    });
+                }
+
+                function handleLogout(e) {
+                    if (e) e.preventDefault();
+                    sessionStorage.removeItem('currentUserLogin');
+                    mostrarAlerta('Has cerrado sesión.', 'info');
+                    window.location.href = 'login.html'; 
+                }
+
+                if (btnLogout) { 
+                    btnLogout.addEventListener('click', (e) => {
+                        e.preventDefault(); 
+                    });
+                }
+                if (confirmLogoutButton) { 
+                    confirmLogoutButton.addEventListener('click', handleLogout);
+                }
+                
                 fetchGetEstudiantes();
+                configurarFormulario(false); 
             });
-        </script> 
-
+        </script>
     </body>
 </html>

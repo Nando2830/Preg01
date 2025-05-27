@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="es">
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>Cambiar Contraseña - Gestión de Estudiantes</title>
+
+        <!-- SB Admin 2 Dependencies -->
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet" type="text/css">
+        <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/startbootstrap-sb-admin-2/4.1.4/css/sb-admin-2.min.css" rel="stylesheet">
+
+        <style>
+            body {
+                background-color: #f8f9fc;
+            } /* Fondo SB Admin 2 */
+            .form-container {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                min-height: 100vh;
+            }
+            .form-card {
+                width: 100%;
+                max-width: 500px;
+            } /* Ancho del card */
+        </style>
+    </head>
+    <body>
+        <div class="container form-container">
+            <div class="card o-hidden border-0 shadow-lg my-5 form-card">
+                <div class="card-body p-0">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="p-5">
+                                <div class="text-center">
+                                    <h1 class="h4 text-gray-900 mb-2">Cambiar Contraseña</h1>
+                                    <p class="mb-4" id="userLoginDisplay">Para usuario: <span class="font-weight-bold text-primary">Cargando...</span></p>
+                                </div>
+                                <form class="user" id="changePasswordForm">
+                                    <!-- Campo oculto para enviar el login del usuario al servlet si no se obtiene de sessionStorage -->
+                                    <!-- <input type="hidden" id="logiEstd" name="logiEstd">  -->
+
+                                    <div class="form-group">
+                                        <input type="password" class="form-control form-control-user"
+                                               id="currentPassword" name="currentPassword" required
+                                               placeholder="Contraseña Actual">
+                                    </div>
+                                    <div class="form-group">
+                                        <input type="password" class="form-control form-control-user"
+                                               id="newPassword" name="newPassword" required
+                                               placeholder="Nueva Contraseña">
+                                    </div>
+                                    <div class="form-group">
+                                        <input type="password" class="form-control form-control-user"
+                                               id="confirmNewPassword" name="confirmNewPassword" required
+                                               placeholder="Confirmar Nueva Contraseña">
+                                    </div>
+                                    <button type="submit" class="btn btn-primary btn-user btn-block">
+                                        Actualizar Contraseña
+                                    </button>
+                                </form>
+                                <hr>
+                                <div id="messageArea" class="text-center small" style="display:none; margin-top: 1rem;">
+                                    <!-- Mensajes de éxito o error se mostrarán aquí. Se pueden usar clases de alerta de Bootstrap -->
+                                </div>
+                                <div class="text-center mt-3">
+                                    <a class="small" href="estudiante.html"><i class="fas fa-arrow-left mr-1"></i>Volver a Gestión de Estudiantes</a>
+                                </div>
+                                <div class="text-center mt-2">
+                                    <a class="small" href="login.html"><i class="fas fa-sign-in-alt mr-1"></i>Ir a Login</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SB Admin 2 Core JavaScript -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/startbootstrap-sb-admin-2/4.1.4/js/sb-admin-2.min.js"></script>
+
+        <!-- Tu Script Personalizado -->
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                const API_CHANGE_PASSWORD_URL = 'ChangePasswordServlet'; // URL de tu servlet de cambio de contraseña
+                const changePasswordForm = document.getElementById('changePasswordForm');
+                const messageArea = document.getElementById('messageArea');
+                const userLoginDisplaySpan = document.getElementById('userLoginDisplay').querySelector('span');
+
+                let currentUserLogin = null;
+
+                // 1. Obtener el 'logiEstd' del usuario.
+                const params = new URLSearchParams(window.location.search);
+                if (params.has('user')) {
+                    currentUserLogin = decodeURIComponent(params.get('user'));
+                } else {
+                    currentUserLogin = sessionStorage.getItem('currentUserLogin');
+                }
+
+                // 2. Validar si se pudo obtener el usuario.
+                if (!currentUserLogin) {
+                    showMessage('Usuario no identificado. Por favor, inicia sesión e inténtalo de nuevo desde la página de gestión.', 'error');
+                    // Deshabilitar el formulario si no hay usuario
+                    changePasswordForm.querySelectorAll('input, button').forEach(el => el.disabled = true);
+                    if (userLoginDisplaySpan)
+                        userLoginDisplaySpan.textContent = "DESCONOCIDO";
+                    return; // No continuar si no hay usuario
+                }
+
+                // 3. Mostrar el login del usuario.
+                if (userLoginDisplaySpan) {
+                    userLoginDisplaySpan.textContent = currentUserLogin;
+                }
+
+                changePasswordForm.addEventListener('submit', async function (event) {
+                    event.preventDefault();
+
+                    const currentPassword = document.getElementById('currentPassword').value;
+                    const newPassword = document.getElementById('newPassword').value;
+                    const confirmNewPassword = document.getElementById('confirmNewPassword').value;
+
+                    // Limpiar mensajes previos
+                    messageArea.textContent = '';
+                    messageArea.className = 'text-center small'; // Reset class
+                    messageArea.style.display = 'none';
+
+
+                    // Validaciones del lado del cliente
+                    if (!currentPassword || !newPassword || !confirmNewPassword) {
+                        showMessage('Todos los campos son obligatorios.', 'error');
+                        return;
+                    }
+                    if (newPassword.length < 6) {
+                        showMessage('La nueva contraseña debe tener al menos 6 caracteres.', 'error');
+                        return;
+                    }
+                    if (newPassword !== confirmNewPassword) {
+                        showMessage('Las nuevas contraseñas no coinciden.', 'error');
+                        return;
+                    }
+                    if (newPassword === currentPassword && currentUserLogin) { // Solo si hay usuario, evitamos error si currentUserLogin es null
+                        showMessage('La nueva contraseña no puede ser igual a la contraseña actual.', 'error');
+                        return;
+                    }
+
+                    // Preparar datos como JSON para enviar al servlet
+                    const changePasswordData = {
+                        logiEstd: currentUserLogin, // El login del usuario actual
+                        currentPassword: currentPassword,
+                        newPassword: newPassword
+                                // El servlet validará de nuevo, no es estrictamente necesario enviar confirmNewPassword
+                    };
+
+                    console.log("Enviando a ChangePasswordServlet:", JSON.stringify(changePasswordData));
+
+                    let responseFetch;
+                    try {
+                        responseFetch = await fetch(API_CHANGE_PASSWORD_URL, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json; charset=UTF-8' // Importante: enviar como JSON
+                            },
+                            body: JSON.stringify(changePasswordData) // Cuerpo como cadena JSON
+                        });
+
+                        const responseText = await responseFetch.text(); // Leer siempre como texto primero
+                        console.log("Respuesta cruda de ChangePasswordServlet:", responseText);
+                        const result = JSON.parse(responseText); // Luego parsear como JSON
+                        console.log("Respuesta parseada de ChangePasswordServlet:", result);
+
+
+                        if (responseFetch.ok && result.success) {
+                            showMessage(result.message || 'Contraseña cambiada exitosamente. Serás redirigido al login.', 'success');
+                            changePasswordForm.reset();
+
+                            // Forzar nuevo login eliminando la sesión actual del navegador
+                            sessionStorage.removeItem('currentUserLogin');
+
+                            setTimeout(() => {
+                                window.location.href = 'login.html'; // Redirigir a login
+                            }, 3000); // Esperar 3 segundos para que el usuario lea el mensaje
+                        } else {
+                            showMessage(result.error || result.message || `Error del servidor (HTTP ${responseFetch.status})`, 'error');
+                        }
+
+                    } catch (error) {
+                        console.error('Error en la petición de cambio de contraseña:', error);
+                        let errorMessage = 'Error de conexión o respuesta inesperada del servidor.';
+                        if (responseFetch) {
+                            errorMessage += ` (HTTP ${responseFetch.status})`;
+                        }
+                        showMessage(errorMessage, 'error');
+                    }
+                });
+
+                function showMessage(message, type) {
+                    messageArea.textContent = message;
+                    // Usar clases de alerta de Bootstrap 4 para los mensajes
+                    if (type === 'success') {
+                        messageArea.className = 'alert alert-success mt-3 text-center small';
+                    } else { // 'error'
+                        messageArea.className = 'alert alert-danger mt-3 text-center small';
+                    }
+                    messageArea.style.display = 'block';
+                }
+            });
+        </script>
+    </body>
+</html>
