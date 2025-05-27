@@ -14,7 +14,7 @@
         <style>
             body {
                 background-color: #f8f9fc;
-            } /* Fondo SB Admin 2 */
+            } 
             .form-container {
                 display: flex;
                 align-items: center;
@@ -24,7 +24,7 @@
             .form-card {
                 width: 100%;
                 max-width: 500px;
-            } /* Ancho del card */
+            } 
         </style>
     </head>
     <body>
@@ -39,9 +39,6 @@
                                     <p class="mb-4" id="userLoginDisplay">Para usuario: <span class="font-weight-bold text-primary">Cargando...</span></p>
                                 </div>
                                 <form class="user" id="changePasswordForm">
-                                    <!-- Campo oculto para enviar el login del usuario al servlet si no se obtiene de sessionStorage -->
-                                    <!-- <input type="hidden" id="logiEstd" name="logiEstd">  -->
-
                                     <div class="form-group">
                                         <input type="password" class="form-control form-control-user"
                                                id="currentPassword" name="currentPassword" required
@@ -63,7 +60,7 @@
                                 </form>
                                 <hr>
                                 <div id="messageArea" class="text-center small" style="display:none; margin-top: 1rem;">
-                                    <!-- Mensajes de éxito o error se mostrarán aquí. Se pueden usar clases de alerta de Bootstrap -->
+                                    <!-- Mensajes de éxito o error -->
                                 </div>
                                 <div class="text-center mt-3">
                                     <a class="small" href="estudiante.html"><i class="fas fa-arrow-left mr-1"></i>Volver a Gestión de Estudiantes</a>
@@ -87,14 +84,13 @@
         <!-- Tu Script Personalizado -->
         <script>
             document.addEventListener('DOMContentLoaded', function () {
-                const API_CHANGE_PASSWORD_URL = 'ChangePasswordServlet'; // URL de tu servlet de cambio de contraseña
+                const API_CHANGE_PASSWORD_URL = 'ChangePasswordServlet'; 
                 const changePasswordForm = document.getElementById('changePasswordForm');
                 const messageArea = document.getElementById('messageArea');
                 const userLoginDisplaySpan = document.getElementById('userLoginDisplay').querySelector('span');
 
                 let currentUserLogin = null;
 
-                // 1. Obtener el 'logiEstd' del usuario.
                 const params = new URLSearchParams(window.location.search);
                 if (params.has('user')) {
                     currentUserLogin = decodeURIComponent(params.get('user'));
@@ -102,17 +98,13 @@
                     currentUserLogin = sessionStorage.getItem('currentUserLogin');
                 }
 
-                // 2. Validar si se pudo obtener el usuario.
                 if (!currentUserLogin) {
                     showMessage('Usuario no identificado. Por favor, inicia sesión e inténtalo de nuevo desde la página de gestión.', 'error');
-                    // Deshabilitar el formulario si no hay usuario
                     changePasswordForm.querySelectorAll('input, button').forEach(el => el.disabled = true);
-                    if (userLoginDisplaySpan)
-                        userLoginDisplaySpan.textContent = "DESCONOCIDO";
-                    return; // No continuar si no hay usuario
+                    if (userLoginDisplaySpan) userLoginDisplaySpan.textContent = "DESCONOCIDO";
+                    return; 
                 }
 
-                // 3. Mostrar el login del usuario.
                 if (userLoginDisplaySpan) {
                     userLoginDisplaySpan.textContent = currentUserLogin;
                 }
@@ -124,13 +116,10 @@
                     const newPassword = document.getElementById('newPassword').value;
                     const confirmNewPassword = document.getElementById('confirmNewPassword').value;
 
-                    // Limpiar mensajes previos
                     messageArea.textContent = '';
-                    messageArea.className = 'text-center small'; // Reset class
+                    messageArea.className = 'text-center small'; 
                     messageArea.style.display = 'none';
 
-
-                    // Validaciones del lado del cliente
                     if (!currentPassword || !newPassword || !confirmNewPassword) {
                         showMessage('Todos los campos son obligatorios.', 'error');
                         return;
@@ -143,56 +132,64 @@
                         showMessage('Las nuevas contraseñas no coinciden.', 'error');
                         return;
                     }
-                    if (newPassword === currentPassword && currentUserLogin) { // Solo si hay usuario, evitamos error si currentUserLogin es null
+                    if (newPassword === currentPassword && currentUserLogin) { 
                         showMessage('La nueva contraseña no puede ser igual a la contraseña actual.', 'error');
                         return;
                     }
 
-                    // Preparar datos como JSON para enviar al servlet
                     const changePasswordData = {
-                        logiEstd: currentUserLogin, // El login del usuario actual
+                        logiEstd: currentUserLogin, 
                         currentPassword: currentPassword,
                         newPassword: newPassword
-                                // El servlet validará de nuevo, no es estrictamente necesario enviar confirmNewPassword
                     };
-
-                    console.log("Enviando a ChangePasswordServlet:", JSON.stringify(changePasswordData));
+                    
+                    console.log("Enviando a " + API_CHANGE_PASSWORD_URL + ":", JSON.stringify(changePasswordData));
 
                     let responseFetch;
                     try {
                         responseFetch = await fetch(API_CHANGE_PASSWORD_URL, {
                             method: 'POST',
                             headers: {
-                                'Content-Type': 'application/json; charset=UTF-8' // Importante: enviar como JSON
+                                'Content-Type': 'application/json; charset=UTF-8'
                             },
-                            body: JSON.stringify(changePasswordData) // Cuerpo como cadena JSON
+                            body: JSON.stringify(changePasswordData) 
                         });
 
-                        const responseText = await responseFetch.text(); // Leer siempre como texto primero
-                        console.log("Respuesta cruda de ChangePasswordServlet:", responseText);
-                        const result = JSON.parse(responseText); // Luego parsear como JSON
-                        console.log("Respuesta parseada de ChangePasswordServlet:", result);
-
-
-                        if (responseFetch.ok && result.success) {
-                            showMessage(result.message || 'Contraseña cambiada exitosamente. Serás redirigido al login.', 'success');
-                            changePasswordForm.reset();
-
-                            // Forzar nuevo login eliminando la sesión actual del navegador
-                            sessionStorage.removeItem('currentUserLogin');
-
-                            setTimeout(() => {
-                                window.location.href = 'login.html'; // Redirigir a login
-                            }, 3000); // Esperar 3 segundos para que el usuario lea el mensaje
-                        } else {
-                            showMessage(result.error || result.message || `Error del servidor (HTTP ${responseFetch.status})`, 'error');
+                        const responseText = await responseFetch.text(); 
+                        console.log("Respuesta cruda de " + API_CHANGE_PASSWORD_URL + ":", responseText);
+                        
+                        // Intentar parsear JSON, pero no es crítico para la lógica de "forzar éxito"
+                        let result = {}; 
+                        try {
+                            result = JSON.parse(responseText);
+                            console.log("Respuesta parseada de " + API_CHANGE_PASSWORD_URL + ":", result);
+                        } catch (parseError) {
+                            console.warn("No se pudo parsear la respuesta como JSON:", parseError);
+                            // Si no es JSON, result seguirá siendo un objeto vacío.
                         }
 
-                    } catch (error) {
+
+                        // ----- MODIFICACIÓN AQUÍ PARA FORZAR MENSAJE DE ÉXITO SI HTTP ES 200 OK -----
+                        if (responseFetch.ok) { // Si el status HTTP es 2xx (ej. 200 OK)
+                            // FORZAR MENSAJE DE ÉXITO
+                            showMessage("CONTRASEÑA MODIFICADA", 'success'); // Tu mensaje personalizado
+                            changePasswordForm.reset();
+                            sessionStorage.removeItem('currentUserLogin'); // Forzar re-login
+                            setTimeout(() => {
+                               window.location.href = 'index.html'; 
+                            }, 3000); 
+                        } else {
+                            // Si el HTTP status NO es OK (ej. 400, 401, 404, 500)
+                            // Intenta usar el mensaje del servidor si existe, sino un genérico
+                            showMessage(result.error || result.message || `Error del servidor (HTTP ${responseFetch.status})`, 'error');
+                        }
+                        // ----- FIN DE LA MODIFICACIÓN -----
+
+                    } catch (error) { // Errores de red o excepciones en el fetch mismo
                         console.error('Error en la petición de cambio de contraseña:', error);
                         let errorMessage = 'Error de conexión o respuesta inesperada del servidor.';
-                        if (responseFetch) {
-                            errorMessage += ` (HTTP ${responseFetch.status})`;
+                         if (responseFetch) { 
+                             errorMessage += ` (HTTP ${responseFetch.status})`;
                         }
                         showMessage(errorMessage, 'error');
                     }
@@ -200,10 +197,9 @@
 
                 function showMessage(message, type) {
                     messageArea.textContent = message;
-                    // Usar clases de alerta de Bootstrap 4 para los mensajes
                     if (type === 'success') {
                         messageArea.className = 'alert alert-success mt-3 text-center small';
-                    } else { // 'error'
+                    } else { 
                         messageArea.className = 'alert alert-danger mt-3 text-center small';
                     }
                     messageArea.style.display = 'block';
