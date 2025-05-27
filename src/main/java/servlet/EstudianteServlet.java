@@ -35,7 +35,7 @@ public class EstudianteServlet extends HttpServlet {
     public void init() throws ServletException {
         super.init();
         // IMPORTANTE: Reemplaza "TuUnidadDePersistenciaPU" con el nombre de tu unidad de persistencia real
-        EntityManagerFactory emf = Persistence.createEntityManagerFactory("TuUnidadDePersistenciaPU");
+        EntityManagerFactory emf = Persistence.createEntityManagerFactory("com.mycompany_Preg01_war_1.0-SNAPSHOTPU");
         dao = new EstudiantewebJpaController(emf);
     }
 
