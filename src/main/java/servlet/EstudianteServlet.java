@@ -25,7 +25,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-@WebServlet(name = "EstudianteServlet", urlPatterns = {"/EstudianteServlet"})
+@WebServlet(name = "EstudianteServlet", urlPatterns = {"/Estudiante"})
 public class EstudianteServlet extends HttpServlet {
 
     private EstudiantewebJpaController dao;
