@@ -33,7 +33,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 
-@WebServlet(name = "ChangePasswordServlet", urlPatterns = {"/ChangePasswordServlet"}) // Nombre y URL actualizados
+@WebServlet(name = "ChangePasswordServlet", urlPatterns = {"/PasswordServlet"}) // Nombre y URL actualizados
 public class ChangePasswordServlet extends HttpServlet {
 
     private EntityManagerFactory emf;
